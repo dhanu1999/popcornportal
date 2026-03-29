@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fetch from 'node-fetch';
 
 // Load environment variables. It will look for .env or .env.local
 dotenv.config({ path: '.env.local' });
@@ -42,6 +41,34 @@ app.get('/api/search', async (req, res) => {
   } catch (error) {
     console.error('Error fetching from Watchmode API:', error);
     return res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
+app.get('/api/sources', async (req, res) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({ error: 'Movie ID parameter is required' });
+    }
+
+    const API_KEY = process.env.VITE_WATCHMODE_API_KEY || process.env.WATCHMODE_API_KEY;
+    if (!API_KEY) {
+      return res.status(500).json({ error: 'API key not configured on server' });
+    }
+
+    const watchmodeUrl = `https://api.watchmode.com/v1/title/${id}/details/?apiKey=${API_KEY}&append_to_response=sources`;
+    
+    const response = await fetch(watchmodeUrl);
+    
+    if (!response.ok) {
+      throw new Error(`API responded with status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return res.json(data);
+  } catch (error) {
+    console.error('Error fetching sources from Watchmode API:', error);
+    return res.status(500).json({ error: 'Failed to fetch tracking data' });
   }
 });
 

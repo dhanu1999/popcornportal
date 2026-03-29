@@ -12,8 +12,7 @@ export default function MovieCard({ movie }) {
     setLoadingSources(true);
     setError(null);
     try {
-      const API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
-      const res = await fetch(`https://api.watchmode.com/v1/title/${movie.id}/details/?apiKey=${API_KEY}&append_to_response=sources`);
+      const res = await fetch(`/api/sources?id=${movie.id}`);
       const data = await res.json();
       
       if (data.sources && data.sources.length > 0) {
