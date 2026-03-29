@@ -16,9 +16,8 @@ function App() {
     setMovies([]);
     
     try {
-      const API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
-      // Using autocomplete-search endpoint to securely fetch title poster images 
-      const res = await fetch(`https://api.watchmode.com/v1/autocomplete-search/?apiKey=${API_KEY}&search_value=${encodeURIComponent(query)}&search_type=1`);
+      // The API key is now completely masked. The request goes to our backend proxy first.
+      const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       
       if (data.results) {
